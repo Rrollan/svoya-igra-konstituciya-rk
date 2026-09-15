@@ -33,6 +33,24 @@ const alternatePrompts = {
   x2: ["Каков конституционный принцип взаимоотношений религии и государства?"],
 };
 
+const answerOptions = {
+  b1: { options: ["Ведущая отрасль национального права", "Отрасль международного права", "Только учебная дисциплина", "Раздел уголовного права"], answerIndex: 0 },
+  b2: { options: ["Только обязательность для граждан", "Высшая юридическая сила, прямое действие, обязательность и особый порядок изменения", "Право принимать любые законы без ограничений", "Рекомендательный характер для органов власти"], answerIndex: 1 },
+  b3: { options: ["1 января 2026 года; Конституция 1995 года продолжила действовать", "15 марта 2026 года; Конституция 1995 года была дополнена", "1 июля 2026 года; Конституция 1995 года прекратила действие", "23 августа 2026 года; Конституция 1995 года была отменена референдумом"], answerIndex: 2 },
+  r1: { options: ["Право на образование", "Право на жизнь", "Право собственности", "Право на труд"], answerIndex: 1 },
+  r2: { options: ["Право на бесплатный интернет", "Защита персональных данных в цифровой среде", "Запрет социальных сетей", "Обязательная цифровая идентификация"], answerIndex: 1 },
+  r3: { options: ["Адвокатура и адвокатская деятельность", "Только нотариат", "Медиация в семейных спорах", "Государственная служба"], answerIndex: 0 },
+  p1: { options: ["Сенат", "Мажилис", "Курултай", "Национальный курултай"], answerIndex: 2 },
+  p2: { options: ["Курултай самостоятельно", "Президент с согласия Курултая", "Конституционный Суд", "Народ на референдуме"], answerIndex: 1 },
+  p3: { options: ["Правительство", "Курултай", "Конституционный Суд", "Прокуратура"], answerIndex: 2 },
+  c1: { options: ["Одна палата — Курултай", "Две палаты — Сенат и Мажилис", "Три палаты — Сенат, Мажилис и Совет", "Парламент не имел палат"], answerIndex: 1 },
+  c2: { options: ["Президент избирается на 5 лет без ограничений", "Президент избирается на 7 лет и может избираться сколько угодно", "Президент избирается на 7 лет, одно лицо — не более одного раза", "Президент назначается Курултаем на 10 лет"], answerIndex: 2 },
+  c3: { options: ["Около 25% текста", "Около 50% текста", "Около 70% текста", "Около 84% текста"], answerIndex: 3 },
+  x1: { options: ["Федеративное государство с парламентской формой", "Унитарное государство с президентской формой правления", "Конфедерация с монархической формой", "Автономная республика"], answerIndex: 1 },
+  x2: { options: ["Религия является частью государственной власти", "Религия отделена от государства; государство светское", "Религия определяет содержание законов", "Государство не регулирует этот вопрос"], answerIndex: 1 },
+  x3: { options: ["Потому что новая Конституция короче прежней", "Потому что Конституция 1995 года продолжает действовать параллельно", "Потому что действующий текст определяет актуальную модель государства и права", "Потому что юристу не нужны комментарии к Конституции"], answerIndex: 2 },
+};
+
 const $ = (selector) => document.querySelector(selector);
 const board = $("#gameBoard");
 const questionModal = $("#questionModal");
@@ -61,6 +79,7 @@ function resetState() {
     deck: shuffle(baseQuestions).map((item) => ({
       ...item,
       question: alternatePrompts[item.id] && Math.random() > 0.45 ? alternatePrompts[item.id][0] : item.question,
+      ...answerOptions[item.id],
     })),
     score: 0,
     answered: 0,
@@ -91,7 +110,7 @@ function renderBoard() {
       const label = result ? (result === "correct" ? "верно" : "завершено") : ["разогрев", "суть", "практика"][level - 1];
       return `<button class="question-tile ${classes}" data-question-id="${question.id}" type="button" ${result ? "disabled" : ""} aria-label="${category.label}, ${label}, ${question.points} очков"><span class="tile-level">${label}</span><span class="tile-points">${question.points}</span></button>`;
     }).join("");
-    return `${head}${tiles}`;
+    return `<div class="category-column">${head}${tiles}</div>`;
   }).join("");
   board.querySelectorAll(".question-tile:not(:disabled)").forEach((tile) => tile.addEventListener("click", () => openQuestion(tile.dataset.questionId)));
 }
@@ -109,17 +128,12 @@ function openQuestion(id) {
   $("#modalDifficulty").textContent = ["разогрев", "суть", "практика"][currentQuestion.level - 1];
   $("#modalPoints").textContent = `+${currentQuestion.points}`;
   $("#modalQuestion").textContent = currentQuestion.question;
-  $("#correctButtonPoints").textContent = `+${currentQuestion.points} очков`;
   $("#hintText").textContent = currentQuestion.hint;
   $("#hintBox").classList.add("is-hidden");
   $("#hintButton").disabled = false;
   $("#hintButton").style.opacity = "1";
-  $("#revealButton").disabled = false;
-  $("#revealButton").style.opacity = "1";
-  $("#answerReveal").classList.add("is-hidden");
-  $("#answerRevealText").textContent = currentQuestion.answer;
-  $("#correctButton").disabled = false;
-  $("#wrongButton").disabled = false;
+  $("#optionList").innerHTML = currentQuestion.options.map((option, index) => `<button class="option-button" type="button" data-option-index="${index}"><span class="option-letter">${String.fromCharCode(65 + index)}</span><span>${option}</span></button>`).join("");
+  $("#optionList").querySelectorAll(".option-button").forEach((button) => button.addEventListener("click", () => selectOption(Number(button.dataset.optionIndex))));
   $("#resultBox").className = "result-box is-hidden";
   questionModal.classList.remove("is-hidden");
   startTimer(currentQuestion.time);
@@ -137,13 +151,13 @@ function startTimer(seconds) {
     timerProgress.style.strokeDashoffset = circumference * (1 - remaining / seconds);
     if (remaining <= 0) {
       clearInterval(timerId);
-      resolveQuestion(false, true);
+      resolveQuestion(false, true, -1);
       maybeFinish();
     }
   }, 1000);
 }
 
-function resolveQuestion(correct, timedOut = false) {
+function resolveQuestion(correct, timedOut = false, selectedIndex = -1) {
   if (!currentQuestion || state[currentQuestion.id]) return;
   clearInterval(timerId);
   const usedHint = state.usedHints.has(currentQuestion.id);
@@ -161,17 +175,20 @@ function resolveQuestion(correct, timedOut = false) {
     state.streak = 0;
     playSound("fail");
   }
-  $("#revealButton").disabled = true;
-  $("#correctButton").disabled = true;
-  $("#wrongButton").disabled = true;
   $("#hintButton").disabled = true;
+  $("#optionList").querySelectorAll(".option-button").forEach((button, index) => {
+    button.disabled = true;
+    if (index === currentQuestion.answerIndex) button.classList.add("is-correct");
+    else if (index === selectedIndex) button.classList.add("is-wrong");
+    else button.classList.add("is-muted");
+  });
   const resultBox = $("#resultBox");
   resultBox.className = `result-box ${correct ? "" : "is-wrong"}`;
   $("#resultIcon").textContent = correct ? "✦" : "×";
   $("#resultTitle").textContent = correct ? "Ответ принят" : timedOut ? "Время вышло" : "Почти рядом";
   $("#resultEarned").textContent = correct ? `+${earned}` : "+0";
-  $("#resultText").textContent = correct ? (usedHint ? "Подсказка помогла — часть стоимости сохранена." : "Точно. Вы забираете всю стоимость клетки.") : "Знание закрепляется, когда сверяешься с нормой и пробуешь ещё раз.";
-  $("#resultAnswer").textContent = currentQuestion.answer;
+  $("#resultText").textContent = correct ? (usedHint ? "Подсказка помогла — часть стоимости сохранена." : "Точно. Выбрана правильная норма.") : timedOut ? "Время вышло — правильный вариант подсвечен зелёным." : "Не угадали. Правильный вариант подсвечен зелёным.";
+  $("#resultAnswer").textContent = currentQuestion.options[currentQuestion.answerIndex];
   updateScorePanel();
   renderBoard();
 }
@@ -221,13 +238,10 @@ function useHint() {
   playSound("click");
 }
 
-function revealAnswer() {
-  if (!currentQuestion) return;
-  $("#answerReveal").classList.remove("is-hidden");
-  $("#revealButton").disabled = true;
-  $("#revealButton").style.opacity = ".55";
-  showToast("Эталон открыт — теперь отметьте результат группы");
-  playSound("click");
+function selectOption(selectedIndex) {
+  if (!currentQuestion || state[currentQuestion.id]) return;
+  resolveQuestion(selectedIndex === currentQuestion.answerIndex, false, selectedIndex);
+  maybeFinish();
 }
 
 function showToast(message) {
@@ -299,9 +313,6 @@ $("#playAgainButton").addEventListener("click", startNewGame);
 $("#newGameButton").addEventListener("click", () => { closeQuestion(); resetState(); showToast("Новая партия готова — вопросы перемешаны"); playSound("click"); });
 $("#soundToggle").addEventListener("click", toggleSound);
 $("#hintButton").addEventListener("click", useHint);
-$("#revealButton").addEventListener("click", revealAnswer);
-$("#correctButton").addEventListener("click", () => { resolveQuestion(true); maybeFinish(); });
-$("#wrongButton").addEventListener("click", () => { resolveQuestion(false); maybeFinish(); });
 $("#nextButton").addEventListener("click", () => { closeQuestion(); maybeFinish(); });
 $("#modalClose").addEventListener("click", closeQuestion);
 questionModal.addEventListener("click", (event) => { if (event.target === questionModal) closeQuestion(); });
