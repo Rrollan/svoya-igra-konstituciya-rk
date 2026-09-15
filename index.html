@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10191c" />
+    <meta name="description" content="Интерактивная учебная игра по новой Конституции Республики Казахстан 2026 года." />
+    <title>Своя игра · Конституция РК 2026</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="ambient ambient-one" aria-hidden="true"></div>
+      <div class="ambient ambient-two" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Своя игра, начало страницы">
+          <span class="brand-mark">§</span>
+          <span>
+            <span class="brand-kicker">учебная студия</span>
+            <span class="brand-name">СВОЯ ИГРА</span>
+          </span>
+        </a>
+        <div class="topbar-meta">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="roundLabel">Раунд 01 · вариант A</span>
+          <button class="icon-button" id="soundToggle" type="button" aria-label="Выключить звук" title="Звук включён">
+            <span id="soundIcon">◖))</span>
+          </button>
+        </div>
+      </header>
+
+      <main id="top" class="main-content">
+        <section class="intro-grid">
+          <div class="intro-copy reveal reveal-one">
+            <div class="eyebrow"><span>Основы права</span><i></i><span>Конституционное право РК</span></div>
+            <h1>Конституция<br /><em>в игре.</em></h1>
+            <p class="intro-text">Проверьте, насколько хорошо вы видите новую правовую модель — от базовых понятий до роли Курултая и цифровых прав.</p>
+            <div class="intro-notes">
+              <span>15 вопросов</span>
+              <span class="note-separator">×</span>
+              <span>3 уровня сложности</span>
+              <span class="note-separator">×</span>
+              <span>один финальный счёт</span>
+            </div>
+          </div>
+
+          <aside class="quote-card reveal reveal-two">
+            <span class="quote-mark">“</span>
+            <p>Конституция — это не только текст. Это способ увидеть, как устроено государство и какие гарантии есть у человека.</p>
+            <span class="quote-caption">конспект занятия · 2026</span>
+          </aside>
+        </section>
+
+        <section class="game-layout" aria-label="Игровое поле">
+          <div class="board-column">
+            <div class="section-heading reveal reveal-three">
+              <div>
+                <span class="section-index">01 / 03</span>
+                <h2>Выберите вопрос</h2>
+              </div>
+              <span class="board-tip">стоимость растёт ↓</span>
+            </div>
+
+            <div class="game-board reveal reveal-four" id="gameBoard" aria-live="polite"></div>
+            <div class="board-legend reveal reveal-four">
+              <span><i class="legend-dot legend-easy"></i>разогрев</span>
+              <span><i class="legend-dot legend-medium"></i>суть</span>
+              <span><i class="legend-dot legend-hard"></i>практика</span>
+              <span class="board-legend-note">вопросы перемешиваются в каждой новой партии</span>
+            </div>
+          </div>
+
+          <aside class="score-panel reveal reveal-five">
+            <div class="panel-topline"><span>ПРОТОКОЛ РАУНДА</span><span class="panel-line"></span></div>
+            <div class="score-orb" id="scoreOrb">
+              <div class="score-orb-inner">
+                <span class="score-label">ваш счёт</span>
+                <strong id="scoreValue">0</strong>
+                <span class="score-unit">очков</span>
+              </div>
+            </div>
+
+            <div class="stat-list">
+              <div class="stat-row"><span>Отвечено</span><strong><span id="answeredValue">0</span><small> / 15</small></strong></div>
+              <div class="stat-row"><span>Верно</span><strong id="correctValue">0</strong></div>
+              <div class="stat-row"><span>Серия</span><strong><span id="streakValue">0</span><small> ×</small></strong></div>
+            </div>
+
+            <div class="progress-block">
+              <div class="progress-label"><span>ПРОГРЕСС</span><span id="progressPercent">0%</span></div>
+              <div class="progress-track"><span id="progressBar"></span></div>
+            </div>
+
+            <div class="panel-footnote"><span class="footnote-icon">↗</span><span>Подсказка снимает 20% стоимости вопроса.</span></div>
+            <button class="new-game-button" id="newGameButton" type="button"><span>Новая партия</span><span>↻</span></button>
+          </aside>
+        </section>
+
+        <section class="learning-strip reveal reveal-six">
+          <div class="strip-label"><span class="section-index">02 / 03</span><strong>карта занятия</strong></div>
+          <div class="learning-item"><span class="learning-number">01</span><div><strong>Знаю текст</strong><span>найти норму в первоисточнике</span></div></div>
+          <div class="learning-item"><span class="learning-number">02</span><div><strong>Найди изменения</strong><span>сравнить модели 1995 и 2026</span></div></div>
+          <div class="learning-item"><span class="learning-number">03</span><div><strong>Конституционный юрист</strong><span>применить знание к ситуации</span></div></div>
+        </section>
+
+        <footer class="site-footer reveal reveal-seven">
+          <span>Материал по плану-конспекту занятия</span>
+          <span>Республика Казахстан · 2026</span>
+        </footer>
+      </main>
+    </div>
+
+    <div class="modal-backdrop is-hidden" id="questionModal" role="presentation">
+      <section class="question-modal" role="dialog" aria-modal="true" aria-labelledby="modalQuestion" aria-describedby="modalMeta">
+        <button class="modal-close" id="modalClose" type="button" aria-label="Закрыть вопрос">×</button>
+        <div class="modal-header">
+          <div>
+            <span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span>
+            <span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 15</span>
+          </div>
+          <div class="timer-wrap" id="timerWrap" aria-label="Оставшееся время">
+            <svg class="timer-ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="timer-ring-track" cx="22" cy="22" r="19"></circle><circle class="timer-ring-progress" id="timerProgress" cx="22" cy="22" r="19"></circle></svg>
+            <span id="timerValue">45</span>
+          </div>
+        </div>
+        <div class="modal-points"><span id="modalDifficulty">разогрев</span><strong id="modalPoints">+100</strong></div>
+        <h2 id="modalQuestion">Вопрос</h2>
+        <div class="hint-box is-hidden" id="hintBox"><span>подсказка</span><p id="hintText"></p></div>
+        <label class="answer-label" for="answerInput">Ваш ответ</label>
+        <textarea id="answerInput" rows="3" placeholder="Напишите коротко, своими словами…"></textarea>
+        <div class="modal-actions">
+          <button class="text-button" id="hintButton" type="button"><span>?</span> Получить подсказку</button>
+          <div class="action-group"><button class="secondary-button" id="skipButton" type="button">Пропустить</button><button class="primary-button" id="checkButton" type="button">Проверить ответ <span>→</span></button></div>
+        </div>
+        <div class="result-box is-hidden" id="resultBox" aria-live="assertive">
+          <div class="result-heading"><span id="resultIcon"></span><strong id="resultTitle"></strong><span class="result-earned" id="resultEarned"></span></div>
+          <p id="resultText"></p>
+          <div class="reference-line"><span>эталон из конспекта</span><p id="resultAnswer"></p></div>
+          <button class="next-button" id="nextButton" type="button">Следующий вопрос <span>→</span></button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop is-hidden" id="welcomeModal" role="presentation">
+      <section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+        <div class="welcome-symbol">§</div>
+        <span class="modal-overline">ПЕРЕД НАЧАЛОМ</span>
+        <h2 id="welcomeTitle">Готовы сыграть<br /><em>по правилам?</em></h2>
+        <p>На поле 15 вопросов из вашего занятия. Выбирайте клетку, отвечайте своими словами и набирайте очки. У каждого вопроса есть подсказка, но за неё снимается часть стоимости.</p>
+        <div class="welcome-rules"><span><b>01</b> Выберите клетку</span><span><b>02</b> Дайте ответ</span><span><b>03</b> Заберите очки</span></div>
+        <button class="start-button" id="startButton" type="button">Начать раунд <span>→</span></button>
+      </section>
+    </div>
+
+    <div class="modal-backdrop is-hidden" id="summaryModal" role="presentation">
+      <section class="summary-modal" role="dialog" aria-modal="true" aria-labelledby="summaryTitle">
+        <span class="modal-overline">РАУНД ЗАВЕРШЁН</span>
+        <div class="summary-accent" aria-hidden="true">✦</div>
+        <h2 id="summaryTitle">Ваш правовой<br /><em>профиль</em></h2>
+        <div class="final-score"><span>ИТОГОВЫЙ СЧЁТ</span><strong id="finalScore">0</strong><small>очков</small></div>
+        <p class="summary-copy" id="summaryCopy"></p>
+        <div class="summary-stats"><span><b id="finalCorrect">0</b><small>верных ответов</small></span><span><b id="finalPercent">0%</b><small>точность</small></span><span><b id="finalBestStreak">0×</b><small>лучшая серия</small></span></div>
+        <button class="start-button" id="playAgainButton" type="button">Сыграть ещё раз <span>↻</span></button>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
