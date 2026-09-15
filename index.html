@@ -131,13 +131,15 @@
         </div>
         <div class="modal-points"><span id="modalDifficulty">разогрев</span><strong id="modalPoints">+100</strong></div>
         <h2 id="modalQuestion">Вопрос</h2>
+        <p class="modal-instruction">Обсудите ответ в группе, затем отметьте результат на экране.</p>
         <div class="hint-box is-hidden" id="hintBox"><span>подсказка</span><p id="hintText"></p></div>
-        <label class="answer-label" for="answerInput">Ваш ответ</label>
-        <textarea id="answerInput" rows="3" placeholder="Напишите коротко, своими словами…"></textarea>
         <div class="modal-actions">
           <button class="text-button" id="hintButton" type="button"><span>?</span> Получить подсказку</button>
-          <div class="action-group"><button class="secondary-button" id="skipButton" type="button">Пропустить</button><button class="primary-button" id="checkButton" type="button">Проверить ответ <span>→</span></button></div>
+          <button class="secondary-button" id="revealButton" type="button">Показать эталон <span>↗</span></button>
         </div>
+        <div class="answer-reveal is-hidden" id="answerReveal"><span>эталон из конспекта</span><p id="answerRevealText"></p></div>
+        <div class="judge-label">ОТМЕТКА ВЕДУЩЕГО</div>
+        <div class="judge-actions" id="judgeActions"><button class="judge-button judge-wrong" id="wrongButton" type="button"><span>Не угадали</span><small>0 очков</small></button><button class="judge-button judge-correct" id="correctButton" type="button"><span>Засчитать ответ</span><small id="correctButtonPoints">+100 очков</small></button></div>
         <div class="result-box is-hidden" id="resultBox" aria-live="assertive">
           <div class="result-heading"><span id="resultIcon"></span><strong id="resultTitle"></strong><span class="result-earned" id="resultEarned"></span></div>
           <p id="resultText"></p>
@@ -152,7 +154,7 @@
         <div class="welcome-symbol">§</div>
         <span class="modal-overline">ПЕРЕД НАЧАЛОМ</span>
         <h2 id="welcomeTitle">Готовы сыграть<br /><em>по правилам?</em></h2>
-        <p>На поле 15 вопросов из вашего занятия. Выбирайте клетку, отвечайте своими словами и набирайте очки. У каждого вопроса есть подсказка, но за неё снимается часть стоимости.</p>
+        <p>На поле 15 вопросов из вашего занятия. Выбирайте клетку, отвечайте вслух и набирайте очки. У каждого вопроса есть подсказка, но за неё снимается часть стоимости.</p>
         <div class="welcome-rules"><span><b>01</b> Выберите клетку</span><span><b>02</b> Дайте ответ</span><span><b>03</b> Заберите очки</span></div>
         <button class="start-button" id="startButton" type="button">Начать раунд <span>→</span></button>
       </section>

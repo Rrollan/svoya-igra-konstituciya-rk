@@ -38,7 +38,6 @@ const board = $("#gameBoard");
 const questionModal = $("#questionModal");
 const welcomeModal = $("#welcomeModal");
 const summaryModal = $("#summaryModal");
-const answerInput = $("#answerInput");
 const timerProgress = $("#timerProgress");
 const circumference = 2 * Math.PI * 19;
 
@@ -110,20 +109,20 @@ function openQuestion(id) {
   $("#modalDifficulty").textContent = ["разогрев", "суть", "практика"][currentQuestion.level - 1];
   $("#modalPoints").textContent = `+${currentQuestion.points}`;
   $("#modalQuestion").textContent = currentQuestion.question;
+  $("#correctButtonPoints").textContent = `+${currentQuestion.points} очков`;
   $("#hintText").textContent = currentQuestion.hint;
   $("#hintBox").classList.add("is-hidden");
   $("#hintButton").disabled = false;
   $("#hintButton").style.opacity = "1";
-  answerInput.value = "";
-  answerInput.disabled = false;
-  $("#checkButton").disabled = false;
-  $("#skipButton").disabled = false;
+  $("#revealButton").disabled = false;
+  $("#revealButton").style.opacity = "1";
+  $("#answerReveal").classList.add("is-hidden");
+  $("#answerRevealText").textContent = currentQuestion.answer;
+  $("#correctButton").disabled = false;
+  $("#wrongButton").disabled = false;
   $("#resultBox").className = "result-box is-hidden";
-  $("#checkButton").style.display = "inline-block";
-  $("#skipButton").style.display = "inline-block";
   questionModal.classList.remove("is-hidden");
   startTimer(currentQuestion.time);
-  window.setTimeout(() => answerInput.focus(), 120);
 }
 
 function startTimer(seconds) {
@@ -144,18 +143,6 @@ function startTimer(seconds) {
   }, 1000);
 }
 
-function normalized(value) {
-  return value.toLowerCase().replace(/ё/g, "е").replace(/[^a-zа-я0-9%]+/gi, " ").replace(/\s+/g, " ").trim();
-}
-
-function isAnswerCorrect(value) {
-  const normalizedValue = normalized(value);
-  if (normalizedValue.length < 3) return false;
-  const matches = currentQuestion.keywords.filter((keyword) => normalizedValue.includes(normalized(keyword))).length;
-  const needed = currentQuestion.keywords.length >= 3 ? 2 : 1;
-  return matches >= needed;
-}
-
 function resolveQuestion(correct, timedOut = false) {
   if (!currentQuestion || state[currentQuestion.id]) return;
   clearInterval(timerId);
@@ -174,9 +161,9 @@ function resolveQuestion(correct, timedOut = false) {
     state.streak = 0;
     playSound("fail");
   }
-  answerInput.disabled = true;
-  $("#checkButton").disabled = true;
-  $("#skipButton").disabled = true;
+  $("#revealButton").disabled = true;
+  $("#correctButton").disabled = true;
+  $("#wrongButton").disabled = true;
   $("#hintButton").disabled = true;
   const resultBox = $("#resultBox");
   resultBox.className = `result-box ${correct ? "" : "is-wrong"}`;
@@ -185,8 +172,6 @@ function resolveQuestion(correct, timedOut = false) {
   $("#resultEarned").textContent = correct ? `+${earned}` : "+0";
   $("#resultText").textContent = correct ? (usedHint ? "Подсказка помогла — часть стоимости сохранена." : "Точно. Вы забираете всю стоимость клетки.") : "Знание закрепляется, когда сверяешься с нормой и пробуешь ещё раз.";
   $("#resultAnswer").textContent = currentQuestion.answer;
-  $("#checkButton").style.display = "none";
-  $("#skipButton").style.display = "none";
   updateScorePanel();
   renderBoard();
 }
@@ -236,20 +221,14 @@ function useHint() {
   playSound("click");
 }
 
-function requestCheck() {
-  const correct = isAnswerCorrect(answerInput.value);
-  if (!answerInput.value.trim()) {
-    answerInput.classList.remove("shake");
-    void answerInput.offsetWidth;
-    answerInput.classList.add("shake");
-    showToast("Сначала напишите ответ своими словами");
-    return;
-  }
-  resolveQuestion(correct);
-  maybeFinish();
+function revealAnswer() {
+  if (!currentQuestion) return;
+  $("#answerReveal").classList.remove("is-hidden");
+  $("#revealButton").disabled = true;
+  $("#revealButton").style.opacity = ".55";
+  showToast("Эталон открыт — теперь отметьте результат группы");
+  playSound("click");
 }
-
-function skipQuestion() { resolveQuestion(false); maybeFinish(); }
 
 function showToast(message) {
   const toast = $("#toast");
@@ -320,8 +299,9 @@ $("#playAgainButton").addEventListener("click", startNewGame);
 $("#newGameButton").addEventListener("click", () => { closeQuestion(); resetState(); showToast("Новая партия готова — вопросы перемешаны"); playSound("click"); });
 $("#soundToggle").addEventListener("click", toggleSound);
 $("#hintButton").addEventListener("click", useHint);
-$("#checkButton").addEventListener("click", requestCheck);
-$("#skipButton").addEventListener("click", skipQuestion);
+$("#revealButton").addEventListener("click", revealAnswer);
+$("#correctButton").addEventListener("click", () => { resolveQuestion(true); maybeFinish(); });
+$("#wrongButton").addEventListener("click", () => { resolveQuestion(false); maybeFinish(); });
 $("#nextButton").addEventListener("click", () => { closeQuestion(); maybeFinish(); });
 $("#modalClose").addEventListener("click", closeQuestion);
 questionModal.addEventListener("click", (event) => { if (event.target === questionModal) closeQuestion(); });
