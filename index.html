@@ -50,6 +50,11 @@
           </aside>
         </section>
 
+        <section class="team-rail reveal reveal-two" aria-label="Командный раунд">
+          <div class="turn-copy"><span class="section-index">КОМАНДНЫЙ РАУНД</span><strong id="turnLabel">Ход команды 1</strong><small>После ответа ход перейдёт следующей команде</small></div>
+          <div class="team-tabs" id="teamTabs" aria-live="polite"></div>
+        </section>
+
         <section class="game-layout" id="game" aria-label="Игровое поле">
           <div class="board-column">
             <div class="section-heading reveal reveal-two">
@@ -67,7 +72,9 @@
 
           <aside class="score-panel reveal reveal-four">
             <div class="panel-topline"><span>ПРОТОКОЛ РАУНДА</span><span class="panel-line"></span></div>
-            <div class="score-orb" id="scoreOrb"><div class="score-orb-inner"><span class="score-label">ваш счёт</span><strong id="scoreValue">0</strong><span class="score-unit">очков</span></div></div>
+            <div class="active-team-card"><span>СЕЙЧАС ИГРАЕТ</span><strong id="activeTeamName">Команда 1</strong><small id="activeTeamScore">0 очков</small></div>
+            <div class="score-orb" id="scoreOrb"><div class="score-orb-inner"><span class="score-label">общий счёт</span><strong id="scoreValue">0</strong><span class="score-unit">очков</span></div></div>
+            <div class="team-leaderboard" id="teamLeaderboard"></div>
             <div class="stat-list">
               <div class="stat-row"><span>Отвечено</span><strong><span id="answeredValue">0</span><small> / 15</small></strong></div>
               <div class="stat-row"><span>Верно</span><strong id="correctValue">0</strong></div>
@@ -92,10 +99,10 @@
     <div class="modal-backdrop is-hidden" id="questionModal" role="presentation">
       <section class="question-modal" role="dialog" aria-modal="true" aria-labelledby="modalQuestion" aria-describedby="modalMeta">
         <button class="modal-close" id="modalClose" type="button" aria-label="Закрыть вопрос">×</button>
-        <div class="modal-header"><div><span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span><span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 15</span></div><div class="timer-wrap" id="timerWrap" aria-label="Оставшееся время"><svg class="timer-ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="timer-ring-track" cx="22" cy="22" r="19"></circle><circle class="timer-ring-progress" id="timerProgress" cx="22" cy="22" r="19"></circle></svg><span id="timerValue">45</span></div></div>
+        <div class="modal-header"><div><span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span><span class="modal-team" id="modalTeam">ХОД КОМАНДЫ 1</span><span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 15</span></div><div class="timer-wrap" id="timerWrap" aria-label="Оставшееся время"><svg class="timer-ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="timer-ring-track" cx="22" cy="22" r="19"></circle><circle class="timer-ring-progress" id="timerProgress" cx="22" cy="22" r="19"></circle></svg><span id="timerValue">45</span></div></div>
         <div class="modal-points"><span id="modalDifficulty">разогрев</span><strong id="modalPoints">+100</strong></div>
         <h2 id="modalQuestion">Вопрос</h2>
-        <p class="modal-instruction">Обсудите ответ в группе и выберите один вариант.</p>
+        <p class="modal-instruction">Команда обсуждает вопрос и выбирает один вариант. После ответа ход перейдёт дальше.</p>
         <div class="hint-box is-hidden" id="hintBox"><span>подсказка</span><p id="hintText"></p></div>
         <div class="options-head"><span>ВЫБЕРИТЕ ОТВЕТ</span><button class="text-button" id="hintButton" type="button"><span>?</span> Подсказка</button></div>
         <div class="option-list" id="optionList"></div>
@@ -104,11 +111,11 @@
     </div>
 
     <div class="modal-backdrop is-hidden" id="welcomeModal" role="presentation">
-      <section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"><div class="welcome-symbol">§</div><span class="modal-overline">ПЕРЕД НАЧАЛОМ</span><h2 id="welcomeTitle">Готовы сыграть<br /><em>по правилам?</em></h2><p>15 вопросов из вашего занятия, 5 тем и 4 варианта ответа в каждом вопросе. Обсуждайте ответ всей группой и выбирайте его на экране.</p><div class="welcome-rules"><span><b>01</b> Выберите клетку</span><span><b>02</b> Обсудите ответ</span><span><b>03</b> Нажмите вариант</span></div><button class="start-button" id="startButton" type="button">Начать раунд <span>→</span></button></section>
+      <section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"><div class="welcome-symbol">§</div><span class="modal-overline">ПЕРЕД НАЧАЛОМ</span><h2 id="welcomeTitle">Готовы сыграть<br /><em>командами?</em></h2><p>15 вопросов из вашего занятия, 5 тем и 4 варианта ответа. Команды отвечают по очереди, а очки автоматически складываются в общий рейтинг.</p><div class="team-setup"><span>СКОЛЬКО КОМАНД ИГРАЕТ?</span><div class="team-count-options" id="teamCountOptions"><button class="team-count-button is-selected" type="button" data-team-count="2">2 команды</button><button class="team-count-button" type="button" data-team-count="3">3 команды</button><button class="team-count-button" type="button" data-team-count="4">4 команды</button></div></div><div class="welcome-rules"><span><b>01</b> Выберите вопрос</span><span><b>02</b> Обсудите ответ</span><span><b>03</b> Передайте ход</span></div><button class="start-button" id="startButton" type="button">Начать командную игру <span>→</span></button></section>
     </div>
 
     <div class="modal-backdrop is-hidden" id="summaryModal" role="presentation">
-      <section class="summary-modal" role="dialog" aria-modal="true" aria-labelledby="summaryTitle"><span class="modal-overline">РАУНД ЗАВЕРШЁН</span><div class="summary-accent" aria-hidden="true">✦</div><h2 id="summaryTitle">Ваш правовой<br /><em>профиль</em></h2><div class="final-score"><span>ИТОГОВЫЙ СЧЁТ</span><strong id="finalScore">0</strong><small>очков</small></div><p class="summary-copy" id="summaryCopy"></p><div class="summary-stats"><span><b id="finalCorrect">0</b><small>верных ответов</small></span><span><b id="finalPercent">0%</b><small>точность</small></span><span><b id="finalBestStreak">0×</b><small>лучшая серия</small></span></div><button class="start-button" id="playAgainButton" type="button">Сыграть ещё раз <span>↻</span></button></section>
+      <section class="summary-modal" role="dialog" aria-modal="true" aria-labelledby="summaryTitle"><span class="modal-overline">РАУНД ЗАВЕРШЁН</span><div class="summary-accent" aria-hidden="true">✦</div><h2 id="summaryTitle">Командный<br /><em>итог</em></h2><div class="summary-winner" id="winnerLabel">ПОБЕДИТЕЛЬ — КОМАНДА 1</div><div class="final-score"><span>ОБЩИЙ СЧЁТ</span><strong id="finalScore">0</strong><small>очков</small></div><p class="summary-copy" id="summaryCopy"></p><div class="summary-stats"><span><b id="finalCorrect">0</b><small>верных ответов</small></span><span><b id="finalPercent">0%</b><small>точность</small></span><span><b id="finalBestStreak">0×</b><small>лучшая серия</small></span></div><button class="start-button" id="playAgainButton" type="button">Сыграть ещё раз <span>↻</span></button></section>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="app.js"></script>

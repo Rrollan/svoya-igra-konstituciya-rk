@@ -64,6 +64,14 @@ let currentQuestion = null;
 let timerId = null;
 let audioContext = null;
 let audioMuted = false;
+let selectedTeamCount = 2;
+
+const teamPalette = [
+  { className: "team-mint", label: "мята" },
+  { className: "team-coral", label: "коралл" },
+  { className: "team-gold", label: "золото" },
+  { className: "team-violet", label: "фиалка" },
+];
 
 function shuffle(items) {
   const copy = [...items];
@@ -86,12 +94,23 @@ function resetState() {
     correct: 0,
     streak: 0,
     bestStreak: 0,
+    activeTeamIndex: 0,
+    teams: Array.from({ length: selectedTeamCount }, (_, index) => ({
+      id: index,
+      name: `Команда ${index + 1}`,
+      score: 0,
+      answered: 0,
+      correct: 0,
+      color: teamPalette[index].className,
+    })),
+    results: {},
     usedHints: new Set(),
     variant: String.fromCharCode(65 + Math.floor(Math.random() * 5)),
   };
   $("#roundLabel").textContent = `Раунд 01 · вариант ${state.variant}`;
   clearInterval(timerId);
   updateScorePanel();
+  renderTeams();
   renderBoard();
 }
 
@@ -105,9 +124,9 @@ function renderBoard() {
     const head = `<div class="category-head"><span>категория</span>${category.label}</div>`;
     const tiles = [1, 2, 3].map((level) => {
       const question = questionFor(category.key, level);
-      const result = state[question.id];
-      const classes = result === "correct" ? "is-correct" : result === "wrong" ? "is-wrong" : "";
-      const label = result ? (result === "correct" ? "верно" : "завершено") : ["разогрев", "суть", "практика"][level - 1];
+      const result = state.results[question.id];
+      const classes = result?.status === "correct" ? "is-correct" : result?.status === "wrong" ? "is-wrong" : "";
+      const label = result ? (result.status === "correct" ? "верно" : "завершено") : ["разогрев", "суть", "практика"][level - 1];
       return `<button class="question-tile ${classes}" data-question-id="${question.id}" type="button" ${result ? "disabled" : ""} aria-label="${category.label}, ${label}, ${question.points} очков"><span class="tile-level">${label}</span><span class="tile-points">${question.points}</span></button>`;
     }).join("");
     return `<div class="category-column">${head}${tiles}</div>`;
@@ -121,9 +140,10 @@ function getQuestion(id) {
 
 function openQuestion(id) {
   currentQuestion = getQuestion(id);
-  if (!currentQuestion || state[currentQuestion.id]) return;
+  if (!currentQuestion || state.results[currentQuestion.id]) return;
   playSound("click");
   $("#modalCategory").textContent = `${categories.find((item) => item.key === currentQuestion.category).label} · уровень ${currentQuestion.level}`;
+  $("#modalTeam").textContent = `ХОД ${state.teams[state.activeTeamIndex].name.toUpperCase()}`;
   $("#modalMeta").textContent = `ВОПРОС ${String(state.answered + 1).padStart(2, "0")} / 15`;
   $("#modalDifficulty").textContent = ["разогрев", "суть", "практика"][currentQuestion.level - 1];
   $("#modalPoints").textContent = `+${currentQuestion.points}`;
@@ -152,21 +172,24 @@ function startTimer(seconds) {
     if (remaining <= 0) {
       clearInterval(timerId);
       resolveQuestion(false, true, -1);
-      maybeFinish();
     }
   }, 1000);
 }
 
 function resolveQuestion(correct, timedOut = false, selectedIndex = -1) {
-  if (!currentQuestion || state[currentQuestion.id]) return;
+  if (!currentQuestion || state.results[currentQuestion.id]) return;
   clearInterval(timerId);
   const usedHint = state.usedHints.has(currentQuestion.id);
   const earned = correct ? Math.round(currentQuestion.points * (usedHint ? 0.8 : 1)) : 0;
-  state[currentQuestion.id] = correct ? "correct" : "wrong";
+  const activeTeam = state.teams[state.activeTeamIndex];
+  state.results[currentQuestion.id] = { status: correct ? "correct" : "wrong", selectedIndex, teamIndex: state.activeTeamIndex };
   state.answered += 1;
+  activeTeam.answered += 1;
   if (correct) {
     state.score += earned;
     state.correct += 1;
+    activeTeam.score += earned;
+    activeTeam.correct += 1;
     state.streak += 1;
     state.bestStreak = Math.max(state.bestStreak, state.streak);
     playSound("success");
@@ -185,11 +208,12 @@ function resolveQuestion(correct, timedOut = false, selectedIndex = -1) {
   const resultBox = $("#resultBox");
   resultBox.className = `result-box ${correct ? "" : "is-wrong"}`;
   $("#resultIcon").textContent = correct ? "✦" : "×";
-  $("#resultTitle").textContent = correct ? "Ответ принят" : timedOut ? "Время вышло" : "Почти рядом";
+  $("#resultTitle").textContent = correct ? "Ответ принят" : timedOut ? "Время вышло" : "Ответ не засчитан";
   $("#resultEarned").textContent = correct ? `+${earned}` : "+0";
-  $("#resultText").textContent = correct ? (usedHint ? "Подсказка помогла — часть стоимости сохранена." : "Точно. Выбрана правильная норма.") : timedOut ? "Время вышло — правильный вариант подсвечен зелёным." : "Не угадали. Правильный вариант подсвечен зелёным.";
+  $("#resultText").textContent = correct ? (usedHint ? `${activeTeam.name} ответила верно. Подсказка сняла 20% стоимости.` : `${activeTeam.name} забирает очки за правильный вариант.`) : timedOut ? "Время вышло — правильный вариант подсвечен зелёным." : "Этот вариант не подошёл. Правильный ответ подсвечен зелёным.";
   $("#resultAnswer").textContent = currentQuestion.options[currentQuestion.answerIndex];
   updateScorePanel();
+  renderTeams();
   renderBoard();
 }
 
@@ -202,6 +226,26 @@ function updateScorePanel() {
   $("#progressPercent").textContent = `${percentage}%`;
   $("#progressBar").style.width = `${percentage}%`;
   $("#scoreOrb").style.background = `conic-gradient(var(--teal) ${percentage * 3.6}deg, rgba(168,216,205,.08) 0deg)`;
+  const activeTeam = state.teams?.[state.activeTeamIndex];
+  if (activeTeam) {
+    $("#activeTeamName").textContent = activeTeam.name;
+    $("#activeTeamScore").textContent = `${activeTeam.score.toLocaleString("ru-RU")} очков`;
+  }
+}
+
+function renderTeams() {
+  if (!state.teams) return;
+  $("#turnLabel").textContent = `Ход ${state.teams[state.activeTeamIndex].name}`;
+  $("#teamTabs").innerHTML = state.teams.map((team, index) => `<div class="team-tab ${team.color} ${index === state.activeTeamIndex ? "is-active" : ""}"><span class="team-tab-dot"></span><strong>${team.name}</strong><b>${team.score.toLocaleString("ru-RU")}</b><small>${index === state.activeTeamIndex ? "сейчас играет" : `${team.correct} верно`}</small></div>`).join("");
+  $("#teamLeaderboard").innerHTML = `<div class="leaderboard-title">КОМАНДНЫЙ СЧЁТ</div>${[...state.teams].sort((a, b) => b.score - a.score).map((team, index) => `<div class="leaderboard-row ${team.color}"><span class="leaderboard-rank">${index + 1}</span><span class="team-tab-dot"></span><strong>${team.name}</strong><b>${team.score.toLocaleString("ru-RU")}</b></div>`).join("")}`;
+}
+
+function advanceTurn() {
+  if (!state.teams?.length) return;
+  state.activeTeamIndex = (state.activeTeamIndex + 1) % state.teams.length;
+  renderTeams();
+  updateScorePanel();
+  if (state.answered < baseQuestions.length) showToast(`Теперь ходит ${state.teams[state.activeTeamIndex].name}`);
 }
 
 function maybeFinish() {
@@ -217,8 +261,10 @@ function showSummary() {
   $("#finalCorrect").textContent = `${state.correct} / 15`;
   $("#finalPercent").textContent = `${Math.round((state.correct / 15) * 100)}%`;
   $("#finalBestStreak").textContent = `${state.bestStreak}×`;
+  const winner = [...state.teams].sort((a, b) => b.score - a.score)[0];
+  $("#winnerLabel").textContent = `ПОБЕДИТЕЛЬ — ${winner.name.toUpperCase()} · ${winner.score.toLocaleString("ru-RU")} ОЧКОВ`;
   const tone = state.correct >= 12 ? "Конституционный компас настроен точно." : state.correct >= 8 ? "Хорошая база — осталось закрепить несколько институтов." : "Самое время открыть текст Конституции и пройти раунд ещё раз.";
-  $("#summaryCopy").textContent = tone;
+  $("#summaryCopy").textContent = `${tone} Команды прошли ${state.answered} вопросов и сыграли на общий рейтинг.`;
   summaryModal.classList.remove("is-hidden");
 }
 
@@ -239,9 +285,8 @@ function useHint() {
 }
 
 function selectOption(selectedIndex) {
-  if (!currentQuestion || state[currentQuestion.id]) return;
+  if (!currentQuestion || state.results[currentQuestion.id]) return;
   resolveQuestion(selectedIndex === currentQuestion.answerIndex, false, selectedIndex);
-  maybeFinish();
 }
 
 function showToast(message) {
@@ -313,10 +358,15 @@ $("#playAgainButton").addEventListener("click", startNewGame);
 $("#newGameButton").addEventListener("click", () => { closeQuestion(); resetState(); showToast("Новая партия готова — вопросы перемешаны"); playSound("click"); });
 $("#soundToggle").addEventListener("click", toggleSound);
 $("#hintButton").addEventListener("click", useHint);
-$("#nextButton").addEventListener("click", () => { closeQuestion(); maybeFinish(); });
+$("#nextButton").addEventListener("click", () => { advanceTurn(); closeQuestion(); maybeFinish(); });
 $("#modalClose").addEventListener("click", closeQuestion);
 questionModal.addEventListener("click", (event) => { if (event.target === questionModal) closeQuestion(); });
 document.addEventListener("keydown", (event) => { if (event.key === "Escape") { closeQuestion(); welcomeModal.classList.add("is-hidden"); } });
+
+$("#teamCountOptions").querySelectorAll(".team-count-button").forEach((button) => button.addEventListener("click", () => {
+  selectedTeamCount = Number(button.dataset.teamCount);
+  $("#teamCountOptions").querySelectorAll(".team-count-button").forEach((item) => item.classList.toggle("is-selected", item === button));
+}));
 
 resetState();
 welcomeModal.classList.remove("is-hidden");
