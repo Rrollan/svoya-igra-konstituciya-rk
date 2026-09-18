@@ -157,7 +157,7 @@ function renderVisualBoard() {
     const result = state.results[question.id];
     const classes = result?.status === "correct" ? "is-correct" : result?.status === "wrong" ? "is-wrong" : "";
     const status = result ? (result.status === "correct" ? "угадано" : "завершено") : "открыть";
-    return `<button class="visual-tile ${classes}" data-question-id="${question.id}" type="button" ${result ? "disabled" : ""} aria-label="Визуальный раунд ${index + 1}: ${question.title}, ${question.points} очков"><span class="visual-tile-index">0${index + 1}</span><span class="visual-tile-art">${visualImage(question, true)}</span><span class="visual-tile-copy"><span>УГАДАЙ ПО КАРТИНКЕ</span><strong>${question.title}</strong><b>${result ? status : `+${question.points} очков`}</b></span></button>`;
+    return `<button class="visual-tile ${classes}" data-question-id="${question.id}" type="button" ${result ? "disabled" : ""} aria-label="Визуальный раунд ${index + 1}, фотография, ${question.points} очков"><span class="visual-tile-index">0${index + 1}</span><span class="visual-tile-art">${visualImage(question, true)}</span><span class="visual-tile-copy"><span>УГАДАЙ ПО КАРТИНКЕ</span><strong>Фото ${String(index + 1).padStart(2, "0")}</strong><b>${result ? status : `+${question.points} очков`}</b></span></button>`;
   }).join("");
   visualBoard.querySelectorAll(".visual-tile:not(:disabled)").forEach((tile) => tile.addEventListener("click", () => openQuestion(tile.dataset.questionId)));
 }
