@@ -77,6 +77,9 @@ let timerId = null;
 let audioContext = null;
 let audioMuted = false;
 let selectedTeamCount = 2;
+let statisticsReturnTarget = null;
+
+const HISTORY_KEY = "svoya-igra-konstituciya-rk-history-v1";
 
 const teamPalette = [
   { className: "team-mint", label: "мята" },
@@ -122,6 +125,7 @@ function resetState() {
     })),
     results: {},
     usedHints: new Set(),
+    resultSaved: false,
     variant: String.fromCharCode(65 + Math.floor(Math.random() * 5)),
   };
   $("#roundLabel").textContent = `Раунд 01 · вариант ${state.variant}`;
@@ -130,6 +134,7 @@ function resetState() {
   renderTeams();
   renderBoard();
   renderVisualBoard();
+  if (state.answered === totalTasks) saveMatchResult();
 }
 
 function questionFor(categoryKey, level) {
@@ -290,6 +295,67 @@ function maybeFinish() {
   }, 450);
 }
 
+function readHistory() {
+  try {
+    const history = JSON.parse(window.localStorage.getItem(HISTORY_KEY) || "[]");
+    return Array.isArray(history) ? history.filter((item) => item && Array.isArray(item.teams)) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveMatchResult() {
+  if (state.resultSaved) return;
+  const record = {
+    id: Date.now(),
+    date: new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date()),
+    score: state.score,
+    correct: state.correct,
+    totalTasks,
+    bestStreak: state.bestStreak,
+    teams: state.teams.map((team) => ({ name: team.name, score: team.score, answered: team.answered, correct: team.correct, color: team.color })),
+  };
+  try {
+    window.localStorage.setItem(HISTORY_KEY, JSON.stringify([record, ...readHistory()].slice(0, 12)));
+  } catch (error) { /* Statistics still work during the current round if storage is unavailable. */ }
+  state.resultSaved = true;
+}
+
+function teamAccuracy(team) {
+  return team.answered ? Math.round((team.correct / team.answered) * 100) : 0;
+}
+
+function renderPodium() {
+  const sortedTeams = [...state.teams].sort((a, b) => b.score - a.score || b.correct - a.correct);
+  $("#podium").innerHTML = sortedTeams.map((team, index) => {
+    const place = index + 1;
+    return `<article class="podium-item place-${place} ${team.color}"><span class="podium-rank">${place}</span><strong class="podium-name">${team.name}</strong><b class="podium-score">${team.score.toLocaleString("ru-RU")}</b><small class="podium-details">${team.correct} верно · ${teamAccuracy(team)}% точность</small><span class="podium-base" aria-hidden="true"></span></article>`;
+  }).join("");
+}
+
+function renderHistory() {
+  const history = readHistory();
+  $("#statisticsLead").textContent = history.length ? `Сохранено партий: ${history.length}. Результаты хранятся только в этом браузере.` : "Пока нет завершённых партий. Сыграйте первую — здесь появится её пьедестал.";
+  $("#historyList").innerHTML = history.length ? history.map((game, gameIndex) => {
+    const sortedTeams = [...game.teams].sort((a, b) => b.score - a.score || b.correct - a.correct);
+    const teamRows = sortedTeams.map((team, index) => `<div class="history-team-row ${team.color}"><span class="history-team-rank">${index + 1}</span><i class="team-tab-dot"></i><strong>${team.name}</strong><small>${team.correct} верно · ${team.answered ? Math.round((team.correct / team.answered) * 100) : 0}%</small><b>${Number(team.score).toLocaleString("ru-RU")}</b></div>`).join("");
+    return `<article class="history-entry"><div class="history-entry-head"><div><span>ПАРТИЯ ${String(history.length - gameIndex).padStart(2, "0")}</span><time>${game.date}</time></div><strong>${Number(game.score).toLocaleString("ru-RU")}<small>очков</small></strong></div><div class="history-team-list">${teamRows}</div><div class="history-entry-foot"><span>${game.correct} / ${game.totalTasks} верных ответов</span><span>серия ${game.bestStreak}×</span></div></article>`;
+  }).join("") : `<div class="history-empty"><span>✦</span><strong>История пока пуста</strong><p>После завершения командной игры результаты сохранятся здесь автоматически.</p></div>`;
+}
+
+function showStatistics(returnToSummary = false) {
+  statisticsReturnTarget = returnToSummary ? "summary" : null;
+  if (returnToSummary) summaryModal.classList.add("is-hidden");
+  renderHistory();
+  $("#statisticsModal").classList.remove("is-hidden");
+}
+
+function closeStatistics() {
+  $("#statisticsModal").classList.add("is-hidden");
+  if (statisticsReturnTarget === "summary") summaryModal.classList.remove("is-hidden");
+  statisticsReturnTarget = null;
+}
+
 function showSummary() {
   $("#finalScore").textContent = state.score.toLocaleString("ru-RU");
   $("#finalCorrect").textContent = `${state.correct} / ${totalTasks}`;
@@ -299,6 +365,8 @@ function showSummary() {
   $("#winnerLabel").textContent = `ПОБЕДИТЕЛЬ — ${winner.name.toUpperCase()} · ${winner.score.toLocaleString("ru-RU")} ОЧКОВ`;
   const tone = state.correct >= 17 ? "Конституционный компас настроен точно." : state.correct >= 11 ? "Хорошая база — осталось закрепить несколько институтов." : "Самое время открыть текст Конституции и пройти раунд ещё раз.";
   $("#summaryCopy").textContent = `${tone} Команды прошли ${state.answered} заданий: ${baseQuestions.length} вопросов и ${visualRounds.length} визуальных раундов.`;
+  saveMatchResult();
+  renderPodium();
   summaryModal.classList.remove("is-hidden");
 }
 
@@ -380,6 +448,7 @@ function toggleSound() {
 
 function startNewGame() {
   summaryModal.classList.add("is-hidden");
+  closeStatistics();
   questionModal.classList.add("is-hidden");
   welcomeModal.classList.add("is-hidden");
   resetState();
@@ -390,12 +459,16 @@ function startNewGame() {
 $("#startButton").addEventListener("click", startNewGame);
 $("#playAgainButton").addEventListener("click", startNewGame);
 $("#newGameButton").addEventListener("click", () => { closeQuestion(); resetState(); showToast("Новая партия готова — вопросы перемешаны"); playSound("click"); });
+$("#historyButton").addEventListener("click", () => showStatistics());
+$("#summaryStatsButton").addEventListener("click", () => showStatistics(true));
+$("#statisticsClose").addEventListener("click", closeStatistics);
 $("#soundToggle").addEventListener("click", toggleSound);
 $("#hintButton").addEventListener("click", useHint);
 $("#nextButton").addEventListener("click", () => { advanceTurn(); closeQuestion(); maybeFinish(); });
 $("#modalClose").addEventListener("click", closeQuestion);
 questionModal.addEventListener("click", (event) => { if (event.target === questionModal) closeQuestion(); });
-document.addEventListener("keydown", (event) => { if (event.key === "Escape") { closeQuestion(); welcomeModal.classList.add("is-hidden"); } });
+document.addEventListener("keydown", (event) => { if (event.key === "Escape") { closeQuestion(); closeStatistics(); welcomeModal.classList.add("is-hidden"); } });
+$("#statisticsModal").addEventListener("click", (event) => { if (event.target === $("#statisticsModal")) closeStatistics(); });
 
 $("#teamCountOptions").querySelectorAll(".team-count-button").forEach((button) => button.addEventListener("click", () => {
   selectedTeamCount = Number(button.dataset.teamCount);

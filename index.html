@@ -90,6 +90,7 @@
             <div class="progress-block"><div class="progress-label"><span>ПРОГРЕСС</span><span id="progressPercent">0%</span></div><div class="progress-track"><span id="progressBar"></span></div></div>
             <div class="panel-footnote"><span class="footnote-icon">?</span><span>Подсказка снимает 20% стоимости вопроса.</span></div>
             <button class="new-game-button" id="newGameButton" type="button"><span>Новая партия</span><span>↻</span></button>
+            <button class="history-button" id="historyButton" type="button"><span>Статистика партий</span><span>↗</span></button>
           </aside>
         </section>
 
@@ -123,7 +124,10 @@
     </div>
 
     <div class="modal-backdrop is-hidden" id="summaryModal" role="presentation">
-      <section class="summary-modal" role="dialog" aria-modal="true" aria-labelledby="summaryTitle"><span class="modal-overline">РАУНД ЗАВЕРШЁН</span><div class="summary-accent" aria-hidden="true">✦</div><h2 id="summaryTitle">Командный<br /><em>итог</em></h2><div class="summary-winner" id="winnerLabel">ПОБЕДИТЕЛЬ — КОМАНДА 1</div><div class="final-score"><span>ОБЩИЙ СЧЁТ</span><strong id="finalScore">0</strong><small>очков</small></div><p class="summary-copy" id="summaryCopy"></p><div class="summary-stats"><span><b id="finalCorrect">0</b><small>верных ответов</small></span><span><b id="finalPercent">0%</b><small>точность</small></span><span><b id="finalBestStreak">0×</b><small>лучшая серия</small></span></div><button class="start-button" id="playAgainButton" type="button">Сыграть ещё раз <span>↻</span></button></section>
+      <section class="summary-modal" role="dialog" aria-modal="true" aria-labelledby="summaryTitle"><span class="modal-overline">РАУНД ЗАВЕРШЁН</span><div class="summary-accent" aria-hidden="true">✦</div><h2 id="summaryTitle">Командный<br /><em>итог</em></h2><div class="summary-winner" id="winnerLabel">ПОБЕДИТЕЛЬ — КОМАНДА 1</div><div class="final-score"><span>ОБЩИЙ СЧЁТ</span><strong id="finalScore">0</strong><small>очков</small></div><p class="summary-copy" id="summaryCopy"></p><div class="podium-heading"><span>ПЬЕДЕСТАЛ</span><small>очки · верные ответы · точность</small></div><div class="podium-grid" id="podium"></div><div class="summary-stats"><span><b id="finalCorrect">0</b><small>верных ответов</small></span><span><b id="finalPercent">0%</b><small>точность</small></span><span><b id="finalBestStreak">0×</b><small>лучшая серия</small></span></div><div class="summary-actions"><button class="history-button" id="summaryStatsButton" type="button"><span>Статистика партий</span><span>↗</span></button><button class="start-button" id="playAgainButton" type="button">Сыграть ещё раз <span>↻</span></button></div></section>
+    </div>
+    <div class="modal-backdrop is-hidden" id="statisticsModal" role="presentation">
+      <section class="statistics-modal" role="dialog" aria-modal="true" aria-labelledby="statisticsTitle"><button class="modal-close" id="statisticsClose" type="button" aria-label="Закрыть статистику">×</button><span class="modal-overline">АРХИВ РЕЗУЛЬТАТОВ</span><h2 id="statisticsTitle">Статистика<br /><em>партий</em></h2><p class="statistics-lead" id="statisticsLead">Здесь сохраняются итоги завершённых игр на этом устройстве.</p><div class="history-list" id="historyList"></div></section>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="app.js"></script>
