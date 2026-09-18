@@ -40,11 +40,11 @@
             <div class="eyebrow"><span>Основы права</span><i></i><span>Конституционное право РК</span></div>
             <h1>Конституция<br /><em>в игре.</em></h1>
             <p class="intro-text">Выбирайте тему, отвечайте всей группой и проверяйте себя по новой правовой модели Казахстана.</p>
-            <div class="intro-notes"><span>15 вопросов</span><span class="note-separator">×</span><span>5 категорий</span><span class="note-separator">×</span><span>4 варианта ответа</span></div>
+            <div class="intro-notes"><span>15 вопросов</span><span class="note-separator">+</span><span>6 визуальных раундов</span><span class="note-separator">×</span><span>4 варианта ответа</span></div>
           </div>
           <aside class="how-card" aria-label="Правила игры">
             <div class="how-card-head"><span class="section-index">БЫСТРЫЙ СТАРТ</span><span class="how-card-mark">01—03</span></div>
-            <div class="how-step"><b>01</b><span>Выберите вопрос<br /><small>категория и уровень</small></span></div>
+              <div class="how-step"><b>01</b><span>Выберите вопрос<br /><small>или визуальную карточку</small></span></div>
             <div class="how-step"><b>02</b><span>Обсудите ответ<br /><small>один вариант из четырёх</small></span></div>
             <div class="how-step"><b>03</b><span>Нажмите вариант<br /><small>счёт обновится сразу</small></span></div>
           </aside>
@@ -66,8 +66,15 @@
               <span><i class="legend-dot legend-easy"></i>разогрев · 100</span>
               <span><i class="legend-dot legend-medium"></i>суть · 300</span>
               <span><i class="legend-dot legend-hard"></i>практика · 500</span>
-              <span class="board-legend-note">Сложность растёт сверху вниз</span>
+              <span class="board-legend-note">Сложность растёт сверху вниз · 15 вопросов</span>
             </div>
+            <section class="visual-round-panel reveal reveal-three" aria-labelledby="visualRoundTitle">
+              <div class="visual-round-heading">
+                <div><span class="section-index">ДОПОЛНИТЕЛЬНЫЙ РАУНД</span><h3 id="visualRoundTitle">Угадай по картинке</h3></div>
+                <p>6 визуальных заданий<br /><span>выберите, что за правовой символ перед вами</span></p>
+              </div>
+              <div class="visual-board" id="visualBoard" aria-live="polite"></div>
+            </section>
           </div>
 
           <aside class="score-panel reveal reveal-four">
@@ -76,7 +83,7 @@
             <div class="score-orb" id="scoreOrb"><div class="score-orb-inner"><span class="score-label">общий счёт</span><strong id="scoreValue">0</strong><span class="score-unit">очков</span></div></div>
             <div class="team-leaderboard" id="teamLeaderboard"></div>
             <div class="stat-list">
-              <div class="stat-row"><span>Отвечено</span><strong><span id="answeredValue">0</span><small> / 15</small></strong></div>
+              <div class="stat-row"><span>Отвечено</span><strong><span id="answeredValue">0</span><small> / 21</small></strong></div>
               <div class="stat-row"><span>Верно</span><strong id="correctValue">0</strong></div>
               <div class="stat-row"><span>Серия</span><strong><span id="streakValue">0</span><small> ×</small></strong></div>
             </div>
@@ -87,7 +94,7 @@
         </section>
 
         <section class="learning-strip reveal reveal-five" id="howToPlay">
-          <div class="strip-label"><span class="section-index">02 / 03</span><strong>карта занятия</strong></div>
+          <div class="strip-label"><span class="section-index">03 / 03</span><strong>карта занятия</strong></div>
           <div class="learning-item"><span class="learning-number">01</span><div><strong>Знаю текст</strong><span>найти норму в первоисточнике</span></div></div>
           <div class="learning-item"><span class="learning-number">02</span><div><strong>Найди изменения</strong><span>сравнить модели 1995 и 2026</span></div></div>
           <div class="learning-item"><span class="learning-number">03</span><div><strong>Конституционный юрист</strong><span>применить знание к ситуации</span></div></div>
@@ -99,19 +106,20 @@
     <div class="modal-backdrop is-hidden" id="questionModal" role="presentation">
       <section class="question-modal" role="dialog" aria-modal="true" aria-labelledby="modalQuestion" aria-describedby="modalMeta">
         <button class="modal-close" id="modalClose" type="button" aria-label="Закрыть вопрос">×</button>
-        <div class="modal-header"><div><span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span><span class="modal-team" id="modalTeam">ХОД КОМАНДЫ 1</span><span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 15</span></div><div class="timer-wrap" id="timerWrap" aria-label="Оставшееся время"><svg class="timer-ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="timer-ring-track" cx="22" cy="22" r="19"></circle><circle class="timer-ring-progress" id="timerProgress" cx="22" cy="22" r="19"></circle></svg><span id="timerValue">45</span></div></div>
+        <div class="modal-header"><div><span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span><span class="modal-team" id="modalTeam">ХОД КОМАНДЫ 1</span><span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 21</span></div><div class="timer-wrap" id="timerWrap" aria-label="Оставшееся время"><svg class="timer-ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="timer-ring-track" cx="22" cy="22" r="19"></circle><circle class="timer-ring-progress" id="timerProgress" cx="22" cy="22" r="19"></circle></svg><span id="timerValue">45</span></div></div>
         <div class="modal-points"><span id="modalDifficulty">разогрев</span><strong id="modalPoints">+100</strong></div>
+        <div class="visual-question-art is-hidden" id="visualQuestionArt"></div>
         <h2 id="modalQuestion">Вопрос</h2>
         <p class="modal-instruction">Команда обсуждает вопрос и выбирает один вариант. После ответа ход перейдёт дальше.</p>
         <div class="hint-box is-hidden" id="hintBox"><span>подсказка</span><p id="hintText"></p></div>
-        <div class="options-head"><span>ВЫБЕРИТЕ ОТВЕТ</span><button class="text-button" id="hintButton" type="button"><span>?</span> Подсказка</button></div>
+        <div class="options-head"><span id="optionsLabel">ВЫБЕРИТЕ ОТВЕТ</span><button class="text-button" id="hintButton" type="button"><span>?</span> Подсказка</button></div>
         <div class="option-list" id="optionList"></div>
         <div class="result-box is-hidden" id="resultBox" aria-live="assertive"><div class="result-heading"><span id="resultIcon"></span><strong id="resultTitle"></strong><span class="result-earned" id="resultEarned"></span></div><p id="resultText"></p><div class="reference-line"><span>правильный ответ</span><p id="resultAnswer"></p></div><button class="next-button" id="nextButton" type="button">Следующий вопрос <span>→</span></button></div>
       </section>
     </div>
 
     <div class="modal-backdrop is-hidden" id="welcomeModal" role="presentation">
-      <section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"><div class="welcome-symbol">§</div><span class="modal-overline">ПЕРЕД НАЧАЛОМ</span><h2 id="welcomeTitle">Готовы сыграть<br /><em>командами?</em></h2><p>15 вопросов из вашего занятия, 5 тем и 4 варианта ответа. Команды отвечают по очереди, а очки автоматически складываются в общий рейтинг.</p><div class="team-setup"><span>СКОЛЬКО КОМАНД ИГРАЕТ?</span><div class="team-count-options" id="teamCountOptions"><button class="team-count-button is-selected" type="button" data-team-count="2">2 команды</button><button class="team-count-button" type="button" data-team-count="3">3 команды</button><button class="team-count-button" type="button" data-team-count="4">4 команды</button></div></div><div class="welcome-rules"><span><b>01</b> Выберите вопрос</span><span><b>02</b> Обсудите ответ</span><span><b>03</b> Передайте ход</span></div><button class="start-button" id="startButton" type="button">Начать командную игру <span>→</span></button></section>
+      <section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"><div class="welcome-symbol">§</div><span class="modal-overline">ПЕРЕД НАЧАЛОМ</span><h2 id="welcomeTitle">Готовы сыграть<br /><em>командами?</em></h2><p>15 вопросов из занятия и 6 визуальных раундов «Угадай по картинке». Команды отвечают по очереди, а очки автоматически складываются в общий рейтинг.</p><div class="team-setup"><span>СКОЛЬКО КОМАНД ИГРАЕТ?</span><div class="team-count-options" id="teamCountOptions"><button class="team-count-button is-selected" type="button" data-team-count="2">2 команды</button><button class="team-count-button" type="button" data-team-count="3">3 команды</button><button class="team-count-button" type="button" data-team-count="4">4 команды</button></div></div><div class="welcome-rules"><span><b>01</b> Выберите вопрос или картинку</span><span><b>02</b> Обсудите ответ</span><span><b>03</b> Передайте ход</span></div><button class="start-button" id="startButton" type="button">Начать командную игру <span>→</span></button></section>
     </div>
 
     <div class="modal-backdrop is-hidden" id="summaryModal" role="presentation">

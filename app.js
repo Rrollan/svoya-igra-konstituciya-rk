@@ -51,8 +51,20 @@ const answerOptions = {
   x3: { options: ["Потому что новая Конституция короче прежней", "Потому что Конституция 1995 года продолжает действовать параллельно", "Потому что действующий текст определяет актуальную модель государства и права", "Потому что юристу не нужны комментарии к Конституции"], answerIndex: 2 },
 };
 
+const visualRounds = [
+  { id: "v1", kind: "visual", visualKind: "shield", title: "Щит и весы", points: 200, time: 40, question: "Какой правовой институт зашифрован в этой иллюстрации?", hint: "Щит и весы намекают на защиту человека через правосудие.", options: ["Судебная защита прав", "Государственный бюджет", "Местное самоуправление", "Избирательная система"], answerIndex: 0 },
+  { id: "v2", kind: "visual", visualKind: "ballot", title: "Голос народа", points: 200, time: 40, question: "Какой способ участия граждан изображён на карточке?", hint: "Здесь решение принимается не представителями, а непосредственно гражданами.", options: ["Референдум", "Назначение Вице-президента", "Судебное заседание", "Парламентские слушания"], answerIndex: 0 },
+  { id: "v3", kind: "visual", visualKind: "data-lock", title: "Цифровой щит", points: 300, time: 35, question: "Какую современную гарантию показывает эта иллюстрация?", hint: "Замок на цифровом экране — защита сведений о человеке.", options: ["Свобода совести", "Защита персональных данных", "Право на труд", "Неприкосновенность жилища"], answerIndex: 1 },
+  { id: "v4", kind: "visual", visualKind: "kurultai", title: "Один зал", points: 300, time: 35, question: "Какой государственный институт зашифрован в силуэте зала?", hint: "Это новый однопалатный законодательный орган.", options: ["Конституционный Суд", "Курултай", "Правительство", "Прокуратура"], answerIndex: 1 },
+  { id: "v5", kind: "visual", visualKind: "constitution", title: "Главный текст", points: 400, time: 30, question: "Что символизирует книга с печатью на иллюстрации?", hint: "Перед вами главный нормативный текст государства.", options: ["Трудовой договор", "Государственный бюджет", "Конституция как Основной закон", "Административный акт"], answerIndex: 2 },
+  { id: "v6", kind: "visual", visualKind: "secular", title: "Разные пути", points: 400, time: 30, question: "Какой принцип конституционного строя показан на карточке?", hint: "Две сферы стоят рядом, но не подчиняются друг другу.", options: ["Федеративное устройство", "Светское государство", "Теократия", "Военная диктатура"], answerIndex: 1 },
+];
+
+const totalTasks = baseQuestions.length + visualRounds.length;
+
 const $ = (selector) => document.querySelector(selector);
 const board = $("#gameBoard");
+const visualBoard = $("#visualBoard");
 const questionModal = $("#questionModal");
 const welcomeModal = $("#welcomeModal");
 const summaryModal = $("#summaryModal");
@@ -82,6 +94,50 @@ function shuffle(items) {
   return copy;
 }
 
+function visualArtwork(kind, compact = false) {
+  const svgClass = `visual-svg${compact ? " is-compact" : ""}`;
+  const art = {
+    shield: `
+      <path class="art-shadow" d="M180 181c-58 0-92-29-92-72V54l92-29 92 29v55c0 43-34 72-92 72Z" />
+      <path class="art-line" d="M180 169c-43-7-68-30-68-63V70l68-22 68 22v36c0 33-25 56-68 63Z" />
+      <path class="art-fill" d="M180 67 139 81v25c0 19 15 34 41 41 26-7 41-22 41-41V81l-41-14Z" />
+      <path class="art-accent" d="M151 119h58M180 88v31M159 88h42" />
+      <circle class="art-dot" cx="180" cy="91" r="4" />`,
+    ballot: `
+      <path class="art-line" d="M93 166h174M111 166V75h148v91M111 75h148M128 75V57h114v18" />
+      <path class="art-fill" d="M134 98h102v50H134z" />
+      <path class="art-paper" d="m166 52 38 12-9 29-38-12z" />
+      <path class="art-accent" d="m171 69 8 4 8-4 8 4" />
+      <path class="art-line" d="M139 110h92M139 123h70" />`,
+    "data-lock": `
+      <rect class="art-fill" x="102" y="46" width="156" height="113" rx="10" />
+      <rect class="art-paper" x="115" y="59" width="130" height="87" rx="5" />
+      <path class="art-accent" d="M145 100h48M145 114h31" />
+      <path class="art-line" d="M207 103v-9c0-15-12-27-27-27s-27 12-27 27v9" />
+      <rect class="art-shadow" x="144" y="99" width="72" height="51" rx="8" />
+      <circle class="art-paper" cx="180" cy="120" r="6" />
+      <path class="art-paper" d="M176 120h8v16h-8z" />`,
+    kurultai: `
+      <path class="art-line" d="M82 166h196M99 166V89h162v77M99 89h162M91 89h178" />
+      <path class="art-fill" d="M126 166V99h20v67M170 166V99h20v67M214 166V99h20v67" />
+      <path class="art-accent" d="m180 42 8 17 19 2-14 12 4 19-17-10-17 10 4-19-14-12 19-2 8-17Z" />
+      <path class="art-line" d="M75 89 180 31l105 58" />`,
+    constitution: `
+      <path class="art-shadow" d="M108 48h132v119H108z" />
+      <path class="art-paper" d="M99 58c25-10 48-8 81 7v104c-33-15-56-17-81-7V58ZM261 58c-25-10-48-8-81 7v104c33-15 56-17 81-7V58Z" />
+      <path class="art-line" d="M180 65v104M124 82h41M124 96h41M124 110h31M236 82h-41M236 96h-41M236 110h-31" />
+      <circle class="art-accent" cx="180" cy="48" r="18" />
+      <path class="art-paper" d="M180 37v22M169 48h22" />`,
+    secular: `
+      <circle class="art-fill" cx="126" cy="99" r="44" />
+      <path class="art-paper" d="M126 67v62M94 99h64" />
+      <path class="art-line" d="M126 55v-17M114 45l12-13 12 13M234 67v66M213 133h42M221 67h26M221 83h26M221 99h26" />
+      <path class="art-accent" d="M162 99h38M190 90l10 9-10 9" />
+      <circle class="art-shadow" cx="234" cy="151" r="10" />`,
+  }[kind] || "";
+  return `<svg class="${svgClass}" viewBox="0 0 360 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Иллюстрация визуального раунда"><rect class="art-bg" x="0" y="0" width="360" height="210" rx="4" />${art}<path class="art-spark" d="M44 42h17M52 33v17M299 158h17M307 149v17" /></svg>`;
+}
+
 function resetState() {
   state = {
     deck: shuffle(baseQuestions).map((item) => ({
@@ -89,6 +145,7 @@ function resetState() {
       question: alternatePrompts[item.id] && Math.random() > 0.45 ? alternatePrompts[item.id][0] : item.question,
       ...answerOptions[item.id],
     })),
+    visualDeck: shuffle(visualRounds),
     score: 0,
     answered: 0,
     correct: 0,
@@ -112,6 +169,7 @@ function resetState() {
   updateScorePanel();
   renderTeams();
   renderBoard();
+  renderVisualBoard();
 }
 
 function questionFor(categoryKey, level) {
@@ -134,20 +192,35 @@ function renderBoard() {
   board.querySelectorAll(".question-tile:not(:disabled)").forEach((tile) => tile.addEventListener("click", () => openQuestion(tile.dataset.questionId)));
 }
 
+function renderVisualBoard() {
+  visualBoard.innerHTML = state.visualDeck.map((question, index) => {
+    const result = state.results[question.id];
+    const classes = result?.status === "correct" ? "is-correct" : result?.status === "wrong" ? "is-wrong" : "";
+    const status = result ? (result.status === "correct" ? "угадано" : "завершено") : "открыть";
+    return `<button class="visual-tile ${classes}" data-question-id="${question.id}" type="button" ${result ? "disabled" : ""} aria-label="Визуальный раунд ${index + 1}: ${question.title}, ${question.points} очков"><span class="visual-tile-index">0${index + 1}</span><span class="visual-tile-art">${visualArtwork(question.visualKind, true)}</span><span class="visual-tile-copy"><span>УГАДАЙ ПО КАРТИНКЕ</span><strong>${question.title}</strong><b>${result ? status : `+${question.points} очков`}</b></span></button>`;
+  }).join("");
+  visualBoard.querySelectorAll(".visual-tile:not(:disabled)").forEach((tile) => tile.addEventListener("click", () => openQuestion(tile.dataset.questionId)));
+}
+
 function getQuestion(id) {
-  return state.deck.find((item) => item.id === id) || baseQuestions.find((item) => item.id === id);
+  return state.deck.find((item) => item.id === id) || state.visualDeck.find((item) => item.id === id) || baseQuestions.find((item) => item.id === id) || visualRounds.find((item) => item.id === id);
 }
 
 function openQuestion(id) {
   currentQuestion = getQuestion(id);
   if (!currentQuestion || state.results[currentQuestion.id]) return;
   playSound("click");
-  $("#modalCategory").textContent = `${categories.find((item) => item.key === currentQuestion.category).label} · уровень ${currentQuestion.level}`;
+  const isVisual = currentQuestion.kind === "visual";
+  const category = categories.find((item) => item.key === currentQuestion.category);
+  $("#modalCategory").textContent = isVisual ? "Визуальный раунд" : `${category.label} · уровень ${currentQuestion.level}`;
   $("#modalTeam").textContent = `ХОД ${state.teams[state.activeTeamIndex].name.toUpperCase()}`;
-  $("#modalMeta").textContent = `ВОПРОС ${String(state.answered + 1).padStart(2, "0")} / 15`;
-  $("#modalDifficulty").textContent = ["разогрев", "суть", "практика"][currentQuestion.level - 1];
+  $("#modalMeta").textContent = `${isVisual ? "ВИЗУАЛЬНЫЙ РАУНД" : "ВОПРОС"} ${String(state.answered + 1).padStart(2, "0")} / ${totalTasks}`;
+  $("#modalDifficulty").textContent = isVisual ? "угадай по картинке" : ["разогрев", "суть", "практика"][currentQuestion.level - 1];
   $("#modalPoints").textContent = `+${currentQuestion.points}`;
+  $("#visualQuestionArt").innerHTML = isVisual ? visualArtwork(currentQuestion.visualKind) : "";
+  $("#visualQuestionArt").classList.toggle("is-hidden", !isVisual);
   $("#modalQuestion").textContent = currentQuestion.question;
+  $("#optionsLabel").textContent = isVisual ? "ВЫБЕРИТЕ, ЧТО ИЗОБРАЖЕНО" : "ВЫБЕРИТЕ ОТВЕТ";
   $("#hintText").textContent = currentQuestion.hint;
   $("#hintBox").classList.add("is-hidden");
   $("#hintButton").disabled = false;
@@ -215,6 +288,7 @@ function resolveQuestion(correct, timedOut = false, selectedIndex = -1) {
   updateScorePanel();
   renderTeams();
   renderBoard();
+  renderVisualBoard();
 }
 
 function updateScorePanel() {
@@ -222,7 +296,7 @@ function updateScorePanel() {
   $("#answeredValue").textContent = state.answered;
   $("#correctValue").textContent = state.correct;
   $("#streakValue").textContent = state.streak;
-  const percentage = Math.round((state.answered / baseQuestions.length) * 100);
+  const percentage = Math.round((state.answered / totalTasks) * 100);
   $("#progressPercent").textContent = `${percentage}%`;
   $("#progressBar").style.width = `${percentage}%`;
   $("#scoreOrb").style.background = `conic-gradient(var(--teal) ${percentage * 3.6}deg, rgba(168,216,205,.08) 0deg)`;
@@ -245,11 +319,11 @@ function advanceTurn() {
   state.activeTeamIndex = (state.activeTeamIndex + 1) % state.teams.length;
   renderTeams();
   updateScorePanel();
-  if (state.answered < baseQuestions.length) showToast(`Теперь ходит ${state.teams[state.activeTeamIndex].name}`);
+  if (state.answered < totalTasks) showToast(`Теперь ходит ${state.teams[state.activeTeamIndex].name}`);
 }
 
 function maybeFinish() {
-  if (state.answered < baseQuestions.length) return;
+  if (state.answered < totalTasks) return;
   window.setTimeout(() => {
     closeQuestion();
     showSummary();
@@ -258,13 +332,13 @@ function maybeFinish() {
 
 function showSummary() {
   $("#finalScore").textContent = state.score.toLocaleString("ru-RU");
-  $("#finalCorrect").textContent = `${state.correct} / 15`;
-  $("#finalPercent").textContent = `${Math.round((state.correct / 15) * 100)}%`;
+  $("#finalCorrect").textContent = `${state.correct} / ${totalTasks}`;
+  $("#finalPercent").textContent = `${Math.round((state.correct / totalTasks) * 100)}%`;
   $("#finalBestStreak").textContent = `${state.bestStreak}×`;
   const winner = [...state.teams].sort((a, b) => b.score - a.score)[0];
   $("#winnerLabel").textContent = `ПОБЕДИТЕЛЬ — ${winner.name.toUpperCase()} · ${winner.score.toLocaleString("ru-RU")} ОЧКОВ`;
-  const tone = state.correct >= 12 ? "Конституционный компас настроен точно." : state.correct >= 8 ? "Хорошая база — осталось закрепить несколько институтов." : "Самое время открыть текст Конституции и пройти раунд ещё раз.";
-  $("#summaryCopy").textContent = `${tone} Команды прошли ${state.answered} вопросов и сыграли на общий рейтинг.`;
+  const tone = state.correct >= 17 ? "Конституционный компас настроен точно." : state.correct >= 11 ? "Хорошая база — осталось закрепить несколько институтов." : "Самое время открыть текст Конституции и пройти раунд ещё раз.";
+  $("#summaryCopy").textContent = `${tone} Команды прошли ${state.answered} заданий: ${baseQuestions.length} вопросов и ${visualRounds.length} визуальных раундов.`;
   summaryModal.classList.remove("is-hidden");
 }
 
