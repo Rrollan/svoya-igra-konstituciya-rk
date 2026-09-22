@@ -63,10 +63,10 @@
             </div>
             <div class="game-board reveal reveal-three" id="gameBoard" aria-live="polite"></div>
             <div class="board-legend reveal reveal-three">
-              <span><i class="legend-dot legend-easy"></i>разогрев · 100</span>
-              <span><i class="legend-dot legend-medium"></i>суть · 300</span>
-              <span><i class="legend-dot legend-hard"></i>практика · 500</span>
-              <span class="board-legend-note">Сложность растёт сверху вниз · 15 вопросов</span>
+              <span><i class="legend-dot legend-easy"></i>старт · 100</span>
+              <span><i class="legend-dot legend-medium"></i>анализ · 300</span>
+              <span><i class="legend-dot legend-hard"></i>казус · 500</span>
+              <span class="board-legend-note">Сложность и темп растут сверху вниз · 15 вопросов</span>
             </div>
             <section class="visual-round-panel reveal reveal-three" aria-labelledby="visualRoundTitle">
               <div class="visual-round-heading">
@@ -107,8 +107,14 @@
     <div class="modal-backdrop is-hidden" id="questionModal" role="presentation">
       <section class="question-modal" role="dialog" aria-modal="true" aria-labelledby="modalQuestion" aria-describedby="modalMeta">
         <button class="modal-close" id="modalClose" type="button" aria-label="Закрыть вопрос">×</button>
-        <div class="modal-header"><div><span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span><span class="modal-team" id="modalTeam">ХОД КОМАНДЫ 1</span><span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 21</span></div><div class="timer-wrap" id="timerWrap" aria-label="Оставшееся время"><svg class="timer-ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="timer-ring-track" cx="22" cy="22" r="19"></circle><circle class="timer-ring-progress" id="timerProgress" cx="22" cy="22" r="19"></circle></svg><span id="timerValue">45</span></div></div>
-        <div class="modal-points"><span id="modalDifficulty">разогрев</span><strong id="modalPoints">+100</strong></div>
+        <div class="modal-header"><div><span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span><span class="modal-team" id="modalTeam">ХОД КОМАНДЫ 1</span><span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 21</span></div></div>
+        <div class="timer-wrap" id="timerWrap" role="timer" aria-label="Оставшееся время на ответ">
+          <div class="timer-copy"><span class="timer-label">ВРЕМЯ НА РЕШЕНИЕ</span><strong class="timer-status" id="timerStatus" aria-live="polite">обсудите и выберите вариант</strong></div>
+          <div class="timer-digits"><strong id="timerValue">45</strong><span>сек</span></div>
+          <div class="timer-bar" id="timerBar" role="progressbar" aria-label="Оставшееся время" aria-valuemin="0" aria-valuemax="45" aria-valuenow="45"><span id="timerProgress"></span></div>
+          <div class="timer-scale" aria-hidden="true"><span>СТАРТ</span><span>ПОЛОВИНА</span><span>ФИНИШ</span></div>
+        </div>
+        <div class="modal-points"><span id="modalDifficulty">старт</span><strong id="modalPoints">+100</strong></div>
         <div class="visual-question-art is-hidden" id="visualQuestionArt"></div>
         <h2 id="modalQuestion">Вопрос</h2>
         <p class="modal-instruction">Команда обсуждает вопрос и выбирает один вариант. После ответа ход перейдёт дальше.</p>
