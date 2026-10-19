@@ -40,7 +40,7 @@
             <div class="eyebrow"><span>Основы права</span><i></i><span>Конституционное право РК</span></div>
             <h1>Конституция<br /><em>в игре.</em></h1>
             <p class="intro-text">Выбирайте тему, отвечайте всей группой и проверяйте себя по новой правовой модели Казахстана.</p>
-            <div class="intro-notes"><span>15 вопросов</span><span class="note-separator">+</span><span>6 визуальных раундов</span><span class="note-separator">×</span><span>4 варианта ответа</span></div>
+            <div class="intro-notes"><span>30 вопросов · 60 секунд</span><span class="note-separator">+</span><span>6 визуальных раундов</span><span class="note-separator">×</span><span>4 варианта ответа</span></div>
           </div>
           <aside class="how-card" aria-label="Правила игры">
             <div class="how-card-head"><span class="section-index">БЫСТРЫЙ СТАРТ</span><span class="how-card-mark">01—03</span></div>
@@ -63,17 +63,21 @@
             </div>
             <div class="game-board reveal reveal-three" id="gameBoard" aria-live="polite"></div>
             <div class="board-legend reveal reveal-three">
-              <span><i class="legend-dot legend-easy"></i>старт · 100</span>
-              <span><i class="legend-dot legend-medium"></i>анализ · 300</span>
-              <span><i class="legend-dot legend-hard"></i>казус · 500</span>
-              <span class="board-legend-note">Сложность и темп растут сверху вниз · 15 вопросов</span>
+              <span><i class="legend-dot legend-easy"></i>старт–разминка · 100–200</span>
+              <span><i class="legend-dot legend-medium"></i>анализ–применение · 300–400</span>
+              <span><i class="legend-dot legend-hard"></i>казус–эксперт · 500–600</span>
+              <span class="board-legend-note">5 категорий × 6 заданий · каждый вопрос — до 60 секунд</span>
             </div>
             <section class="visual-round-panel reveal reveal-three" aria-labelledby="visualRoundTitle">
               <div class="visual-round-heading">
                 <div><span class="section-index">ДОПОЛНИТЕЛЬНЫЙ РАУНД</span><h3 id="visualRoundTitle">Угадай по картинке</h3></div>
-                <p>6 визуальных заданий<br /><span>угадайте казахстанский объект или символ</span></p>
+                <p>6 визуальных заданий<br /><span>фото задаёт непростой правовой кейс</span></p>
               </div>
               <div class="visual-board" id="visualBoard" aria-live="polite"></div>
+              <details class="visual-credits">
+                <summary>Авторы и лицензии изображений</summary>
+                <p>Флаг — <a href="https://commons.wikimedia.org/wiki/File:%D0%A4%D0%BB%D0%B0%D0%B3_%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D1%82%D0%B0%D0%BD%D0%B0.jpg" target="_blank" rel="noreferrer">Timergizer · общественное достояние</a> · урна — <a href="https://commons.wikimedia.org/wiki/File:2026_Kazakh_constitutional_referendum_at_the_171th_polling_station,_Astana._Ballot_box.jpg" target="_blank" rel="noreferrer">Nurken · CC BY-SA 4.0</a> · Конституционный Суд — <a href="https://commons.wikimedia.org/wiki/File:%D0%AD%D0%BC%D0%B1%D0%BB%D0%B5%D0%BC%D0%B0_%D0%9A%D0%BE%D0%BD%D1%81%D1%82%D0%B8%D1%82%D1%83%D1%86%D0%B8%D0%BE%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE_%D1%81%D1%83%D0%B4%D0%B0_%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D1%82%D0%B0%D0%BD%D0%B0.png" target="_blank" rel="noreferrer">официальный знак · public domain</a> · Парламент — <a href="https://commons.wikimedia.org/wiki/File:%D0%97%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BF%D0%B0%D1%80%D0%BB%D0%B0%D0%BC%D0%B5%D0%BD%D1%82%D0%B0_%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D1%82%D0%B0%D0%BD%D0%B0.jpg" target="_blank" rel="noreferrer">Jinx13a · CC BY-SA 4.0</a> · Конституция — <a href="https://commons.wikimedia.org/wiki/File:Constitution_of_Kazakhstan_%2814944227840%29.jpg" target="_blank" rel="noreferrer">Alex J. Butler · CC BY 2.0</a> · Верховный Суд — <a href="https://commons.wikimedia.org/wiki/File:%D0%92%D0%B5%D1%80%D1%85%D0%BE%D0%B2%D0%BD%D1%8B%D0%B9_%D1%81%D1%83%D0%B4_%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D1%82%D0%B0%D0%BD%D0%B0_2017.jpg" target="_blank" rel="noreferrer">Владимир Мазур · CC BY-SA 4.0</a>.</p>
+              </details>
             </section>
           </div>
 
@@ -83,7 +87,7 @@
             <div class="score-orb" id="scoreOrb"><div class="score-orb-inner"><span class="score-label">общий счёт</span><strong id="scoreValue">0</strong><span class="score-unit">очков</span></div></div>
             <div class="team-leaderboard" id="teamLeaderboard"></div>
             <div class="stat-list">
-              <div class="stat-row"><span>Отвечено</span><strong><span id="answeredValue">0</span><small> / 21</small></strong></div>
+              <div class="stat-row"><span>Отвечено</span><strong><span id="answeredValue">0</span><small> / 36</small></strong></div>
               <div class="stat-row"><span>Верно</span><strong id="correctValue">0</strong></div>
               <div class="stat-row"><span>Серия</span><strong><span id="streakValue">0</span><small> ×</small></strong></div>
             </div>
@@ -107,11 +111,11 @@
     <div class="modal-backdrop is-hidden" id="questionModal" role="presentation">
       <section class="question-modal" role="dialog" aria-modal="true" aria-labelledby="modalQuestion" aria-describedby="modalMeta">
         <button class="modal-close" id="modalClose" type="button" aria-label="Закрыть вопрос">×</button>
-        <div class="modal-header"><div><span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span><span class="modal-team" id="modalTeam">ХОД КОМАНДЫ 1</span><span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 21</span></div></div>
+        <div class="modal-header"><div><span class="modal-overline" id="modalCategory">КАТЕГОРИЯ</span><span class="modal-team" id="modalTeam">ХОД КОМАНДЫ 1</span><span class="modal-question-id" id="modalMeta">ВОПРОС 01 / 36</span></div></div>
         <div class="timer-wrap" id="timerWrap" role="timer" aria-label="Оставшееся время на ответ">
           <div class="timer-copy"><span class="timer-label">ВРЕМЯ НА РЕШЕНИЕ</span><strong class="timer-status" id="timerStatus" aria-live="polite">обсудите и выберите вариант</strong></div>
-          <div class="timer-digits"><strong id="timerValue">45</strong><span>сек</span></div>
-          <div class="timer-bar" id="timerBar" role="progressbar" aria-label="Оставшееся время" aria-valuemin="0" aria-valuemax="45" aria-valuenow="45"><span id="timerProgress"></span></div>
+          <div class="timer-digits"><strong id="timerValue">60</strong><span>сек</span></div>
+          <div class="timer-bar" id="timerBar" role="progressbar" aria-label="Оставшееся время" aria-valuemin="0" aria-valuemax="60" aria-valuenow="60"><span id="timerProgress"></span></div>
           <div class="timer-scale" aria-hidden="true"><span>СТАРТ</span><span>ПОЛОВИНА</span><span>ФИНИШ</span></div>
         </div>
         <div class="modal-points"><span id="modalDifficulty">старт</span><strong id="modalPoints">+100</strong></div>
@@ -126,7 +130,7 @@
     </div>
 
     <div class="modal-backdrop is-hidden" id="welcomeModal" role="presentation">
-      <section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"><div class="welcome-symbol">§</div><span class="modal-overline">ПЕРЕД НАЧАЛОМ</span><h2 id="welcomeTitle">Готовы сыграть<br /><em>командами?</em></h2><p>15 вопросов из занятия и 6 визуальных раундов «Угадай по картинке». Команды отвечают по очереди, а очки автоматически складываются в общий рейтинг.</p><div class="team-setup"><span>СКОЛЬКО КОМАНД ИГРАЕТ?</span><div class="team-count-options" id="teamCountOptions"><button class="team-count-button is-selected" type="button" data-team-count="2">2 команды</button><button class="team-count-button" type="button" data-team-count="3">3 команды</button><button class="team-count-button" type="button" data-team-count="4">4 команды</button></div></div><div class="welcome-rules"><span><b>01</b> Выберите вопрос или картинку</span><span><b>02</b> Обсудите ответ</span><span><b>03</b> Передайте ход</span></div><button class="start-button" id="startButton" type="button">Начать командную игру <span>→</span></button></section>
+      <section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"><div class="welcome-symbol">§</div><span class="modal-overline">ПЕРЕД НАЧАЛОМ</span><h2 id="welcomeTitle">Готовы сыграть<br /><em>командами?</em></h2><p>30 вопросов из занятия — по минуте на обсуждение — и 6 быстрых визуальных раундов «Угадай по картинке». Команды отвечают по очереди, очки автоматически складываются в общий рейтинг.</p><div class="team-setup"><span>СКОЛЬКО КОМАНД ИГРАЕТ?</span><div class="team-count-options" id="teamCountOptions"><button class="team-count-button is-selected" type="button" data-team-count="2">2 команды</button><button class="team-count-button" type="button" data-team-count="3">3 команды</button><button class="team-count-button" type="button" data-team-count="4">4 команды</button></div></div><div class="welcome-rules"><span><b>01</b> Выберите вопрос или картинку</span><span><b>02</b> Обсудите ответ</span><span><b>03</b> Передайте ход</span></div><button class="start-button" id="startButton" type="button">Начать командную игру <span>→</span></button></section>
     </div>
 
     <div class="modal-backdrop is-hidden" id="summaryModal" role="presentation">
@@ -134,6 +138,14 @@
     </div>
     <div class="modal-backdrop is-hidden" id="statisticsModal" role="presentation">
       <section class="statistics-modal" role="dialog" aria-modal="true" aria-labelledby="statisticsTitle"><button class="modal-close" id="statisticsClose" type="button" aria-label="Закрыть статистику">×</button><span class="modal-overline">АРХИВ РЕЗУЛЬТАТОВ</span><h2 id="statisticsTitle">Статистика<br /><em>партий</em></h2><p class="statistics-lead" id="statisticsLead">Здесь сохраняются итоги завершённых игр на этом устройстве.</p><div class="history-list" id="historyList"></div></section>
+    </div>
+    <div class="turn-splash" id="turnSplash" aria-hidden="true">
+      <div class="turn-splash-card">
+        <span>СЛЕДУЮЩИЙ ХОД</span>
+        <strong id="turnSplashNumber">2</strong>
+        <b id="turnSplashName">КОМАНДА 2</b>
+        <i aria-hidden="true"></i>
+      </div>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="app.js"></script>
