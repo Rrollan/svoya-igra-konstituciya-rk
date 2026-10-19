@@ -156,3 +156,10 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--coral); outline
 @keyframes turn-splash-backdrop { 0%, 100% { opacity: 0; } 10%, 70% { opacity: 1; } }
 @keyframes turn-splash-card { 0%, 100% { opacity: 0; transform: translateY(18px) scale(.94); } 12% { opacity: 1; transform: translateY(0) scale(1); } 20%, 68% { opacity: 1; transform: translateY(0) scale(1); } 80% { opacity: 0; transform: translateY(-8px) scale(1.025); } }
 @media (max-width: 760px) { .turn-splash-card { min-width: min(86vw, 390px); padding: 22px 25px 25px; }.turn-splash-card > b { font-size: 12px; } }
+
+/* Short, readable question copy */
+.question-modal h2 { max-width: 100%; margin-top: 18px; font-family: var(--body); font-size: clamp(26px, 3vw, 34px); font-weight: 800; line-height: 1.18; letter-spacing: -.035em; }
+.modal-instruction { margin-top: 9px; font-size: 13px; line-height: 1.45; }
+.options-head { margin-top: 18px; }
+.option-list { gap: 10px; }
+.option-button { min-height: 70px; font-size: 14px; line-height: 1.4; font-weight: 700; }
